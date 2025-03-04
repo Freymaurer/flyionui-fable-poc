@@ -93,6 +93,16 @@ type contextMenu =
     /// Use it with prop.className [contextMenu.isContextMenu] to make it work.
     static member isContextMenu = "[--trigger:contextmenu]"
 
+
+module Sortable =
+
+
+    type ISortable =
+        abstract member create: Browser.Types.HTMLElement -> obj -> unit
+
+    [<ImportDefault("sortablejs")>]
+    let Sortable : ISortable = jsNative
+
 [<Mangle(false); Erase>]
 type flyonui =
     [<ReactComponent>]
@@ -221,5 +231,40 @@ type flyonui =
                             ]
                     ]
                 ]
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member DragAndDrop() =
+
+        let listRef = React.useElementRef()
+
+        React.useLayoutEffectOnce(fun () ->
+            if listRef.current.IsSome then
+                Sortable.Sortable.create listRef.current.Value {|
+                    animation = 150
+                |}
+
+        )
+
+        let listElement index = Html.li [
+            prop.className "flex items-center gap-3"
+            prop.children [
+                Html.span [
+                    prop.className "icon-[tabler--grip-vertical] cursor-move"
+                ]
+                Html.span [
+                    prop.className "text-base-content"
+                    prop.text $"Item {index}"
+                ]
+            ]
+        ]
+
+        Html.ul [
+            prop.ref listRef
+            prop.className "bg-base-100 text-base-content p-4 rounded divide-base-content/25 flex flex-col divide-y"
+            prop.children [
+                for i in 0 .. 10 do
+                    listElement i
             ]
         ]

@@ -137,6 +137,7 @@ let view model dispatch =
                     ]
                     flyonui.ContextMenu()
                     flyonui.TestSelect()
+                    flyonui.DragAndDrop()
                     ViewComponents.todoList model dispatch
                 ]
             ]
